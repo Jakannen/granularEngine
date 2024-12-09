@@ -12,7 +12,7 @@
 #include <vector>
 #include <cmath>
 #include <random>
-
+#include <juce_audio_processors/juce_audio_processors.h>
 
 // Forward Declarations
 class Grain;
@@ -23,10 +23,13 @@ public:
     Granulator(size_t maxGrains, size_t sampleRate);
     void setGrainDensity(float density);
     void setPlaybackRate(float rate);
+    void setParameters(const juce::AudioProcessorValueTreeState& parameters);
     void process(float* buffer, size_t numSamples);
 
 private:
     Scheduler* scheduler;
     std::vector<Grain*> grains;
     float sampleRate;
+    float grainDensity;
+    float playbackRate;
 };

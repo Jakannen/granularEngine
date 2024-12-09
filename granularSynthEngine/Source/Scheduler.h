@@ -1,23 +1,11 @@
-/*
-  ==============================================================================
-
-    Scheduler.h
-    Created: 8 Dec 2024 7:52:34pm
-    Author:  Jack
-
-  ==============================================================================
-*/
-
 #pragma once
 #include <vector>
 #include "Grain.h"
 
 /**
- * The Scheduler class manages the activation, deactivation, and processing of grains
- * in the granular synthesizer. It schedules grains based on user-defined parameters
- * such as grain density and playback rate and ensures efficient audio processing.
+ * The Scheduler class manages grain activation, deactivation, and scheduling.
+ * It holds a shared source buffer and assigns segments of the buffer to grains for playback.
  */
-
 class Scheduler {
 public:
     /**
@@ -29,22 +17,29 @@ public:
     Scheduler(size_t maxGrains, float sampleRate);
 
     /**
-     * Sets the grain density, which determines how many grains are activated per second.
+     * Sets the shared audio source buffer.
+     *
+     * @param buffer The audio source buffer containing the data for grains to process.
+     */
+    void setSourceBuffer(const std::vector<float>& buffer);
+
+    /**
+     * Sets the grain density, determining how many grains are activated per second.
      *
      * @param density The grain density, typically a value between 0.0 and 1.0.
      */
     void setGrainDensity(float density);
 
     /**
-     * Sets the playback rate, which adjusts the speed at which grains play back their source.
+     * Sets the playback rate, adjusting the speed at which grains play.
      *
-     * @param rate The playback rate multiplier, where 1.0 is the normal speed.
+     * @param rate The playback rate multiplier, where 1.0 is normal speed.
      */
     void setPlaybackRate(float rate);
 
     /**
      * Processes audio output by iterating over active grains, mixing their output, and
-     * activating new grains based on the current grain density and playback parameters.
+     * activating new grains as needed.
      *
      * @param buffer Pointer to the audio buffer to store the mixed grain output.
      * @param numSamples The number of audio samples to process in this block.
@@ -52,15 +47,15 @@ public:
     void process(float* buffer, size_t numSamples);
 
 private:
-    std::vector<Grain> grainPool;
-    size_t activeGrainCount;
-    float sampleRate;
-    float grainDensity;
-    float playbackRate;
+    const std::vector<float>* sourceBuffer; ///< Shared audio source buffer.
+    std::vector<Grain> grainPool;           ///< Pool of reusable grains.
+    size_t activeGrainCount;                ///< Current number of active grains.
+    float sampleRate;                       ///< Audio sample rate (e.g., 44100 Hz).
+    float grainDensity;                     ///< Number of grains activated per second.
+    float playbackRate;                     ///< Playback speed multiplier.
 
     /**
-     * Activates new grains based on the current grain density and playback rate.
-     * If the maximum number of active grains is reached, no additional grains are activated.
+     * Activates new grains based on the grain density and playback parameters.
      */
     void activateNewGrains();
 };

@@ -20,7 +20,17 @@
  * @param sampleRate The audio sample rate (e.g., 44100 Hz).
  */
 Scheduler::Scheduler(size_t maxGrains, float sampleRate)
-    : grainPool(maxGrains, Grain(sampleRate)), activeGrainCount(0), sampleRate(sampleRate) {
+    : sourceBuffer(nullptr), grainPool(maxGrains, Grain(sampleRate)),
+    activeGrainCount(0), sampleRate(sampleRate), grainDensity(0.5f), playbackRate(1.0f) {
+}
+
+/**
+ * Sets the shared audio source buffer for the Scheduler.
+ *
+ * @param buffer The audio source buffer containing sound data.
+ */
+void Scheduler::setSourceBuffer(const std::vector<float>& buffer) {
+    sourceBuffer = &buffer;
 }
 
 /**
@@ -43,6 +53,27 @@ void Scheduler::setPlaybackRate(float rate) {
     playbackRate = rate;
 }
 
+/**
+ * Processes audio by mixing active grains into the output buffer
+ * and scheduling new grains based on current parameters.
+ *
+ * @param buffer Pointer to the output audio buffer.
+ * @param numSamples The number of samples to process.
+ */
+void Scheduler::process(float* buffer, size_t numSamples) {
+    // Clear the output buffer
+    std::fill(buffer, buffer + numSamples, 0.0f);
+
+    // Process active grains
+    for (Grain& grain : grainPool) {
+        if (grain.isActive()) {
+            grain.process(buffer, numSamples);
+        }
+    }
+
+    // Activate new grains
+    activateNewGrains();
+}
 
 /**
  * Processes the audio buffer by iterating over active grains and mixing their outputs.
@@ -54,19 +85,14 @@ void Scheduler::setPlaybackRate(float rate) {
 void Scheduler::activateNewGrains() {
     // Calculate the number of grains to activate based on density
     size_t grainsToActivate = static_cast<size_t>(grainDensity * sampleRate);
-
-    // Random number generator for grain start positions
-    static std::default_random_engine generator;
-    static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-
     // Attempt to activate the calculated number of grains
     for (size_t i = 0; i < grainsToActivate && activeGrainCount < grainPool.size(); ++i) {
         for (Grain& grain : grainPool) {
             if (!grain.isActive()) {
                 // Randomize start position and activate the grain
-                float startSample = distribution(generator) * sampleRate;
+                float startSample = static_cast<float>(std::rand()) / RAND_MAX * sourceBuffer->size();
                 float duration = 0.05f; // Fixed grain duration (e.g., 50ms)
-                grain.activate(startSample, duration, playbackRate, sourceBuffer);
+                grain.activate(startSample, duration, playbackRate, *sourceBuffer);
                 ++activeGrainCount;
                 break; // Move to the next grain
             }

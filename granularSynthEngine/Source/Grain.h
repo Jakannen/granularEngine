@@ -8,6 +8,7 @@ public:
     void activate(float startSample, float duration, float playbackRate, const std::vector<float>& sourceBuffer);
     void process(float* output, size_t numSamples);
     bool isActive() const;
+    const std::vector<float>* sourceBuffer; // Pointer to source buffer
 
 private:
     float sampleRate;
@@ -16,6 +17,4 @@ private:
     float duration;
     float playbackRate;
     bool active;
-
-    const std::vector<float>* sourceBuffer; // Pointer to source buffer
 };

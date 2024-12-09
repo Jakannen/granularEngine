@@ -25,6 +25,14 @@ void Granulator::setPlaybackRate(float rate) {
     scheduler->setPlaybackRate(rate);
 }
 
+void Granulator::setParameters(const juce::AudioProcessorValueTreeState& parameters) {
+    grainDensity = parameters.getRawParameterValue("grainDensity")->load();
+    playbackRate = parameters.getRawParameterValue("playbackRate")->load();
+    scheduler->setGrainDensity(grainDensity);
+    scheduler->setPlaybackRate(playbackRate);
+}
+
+
 void Granulator::process(float* buffer, size_t numSamples) {
     scheduler->process(buffer, numSamples);
 }
