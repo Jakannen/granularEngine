@@ -19,7 +19,7 @@ GranularSynthEngineAudioProcessor::GranularSynthEngineAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), parameters(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
     granulator = std::make_unique<Granulator>(128, getSampleRate());
@@ -131,6 +131,7 @@ bool GranularSynthEngineAudioProcessor::isBusesLayoutSupported (const BusesLayou
 
 void GranularSynthEngineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    granulator->setParameters(parameters);
     auto* leftChannel = buffer.getWritePointer(0);
     granulator->process(leftChannel, buffer.getNumSamples());
 }
@@ -165,4 +166,11 @@ void GranularSynthEngineAudioProcessor::setStateInformation (const void* data, i
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new GranularSynthEngineAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout GranularSynthEngineAudioProcessor::createParameterLayout() {
+    return {
+        std::make_unique<juce::AudioParameterFloat>("grainDensity", "Grain Density", 0.0f, 1.0f, 0.5f),
+        std::make_unique<juce::AudioParameterFloat>("playbackRate", "Playback Rate", 0.5f, 2.0f, 1.0f)
+    };
 }
