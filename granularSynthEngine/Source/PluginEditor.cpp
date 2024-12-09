@@ -15,12 +15,18 @@ GranularSynthEngineAudioProcessorEditor::GranularSynthEngineAudioProcessorEditor
 {
     addAndMakeVisible(grainDensitySlider);
     addAndMakeVisible(playbackRateSlider);
+    addAndMakeVisible(pitchSmearSlider);
+    addAndMakeVisible(timeFreezeButton);
 
     grainDensityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.parameters, "grainDensity", grainDensitySlider);
-
     playbackRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.parameters, "playbackRate", playbackRateSlider);
+    pitchSmearAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.parameters, "pitchSmear", pitchSmearSlider);
+    timeFreezeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        audioProcessor.parameters, "timeFreeze", timeFreezeButton);
+
     setSize (400, 300);
 }
 
@@ -43,4 +49,6 @@ void GranularSynthEngineAudioProcessorEditor::resized()
 {
     grainDensitySlider.setBounds(50, 50, getWidth() - 100, 20);
     playbackRateSlider.setBounds(50, 100, getWidth() - 100, 20);
+    pitchSmearSlider.setBounds(50, 150, getWidth() - 100, 30);
+    timeFreezeButton.setBounds(50, 200, getWidth() - 100, 30);
 }

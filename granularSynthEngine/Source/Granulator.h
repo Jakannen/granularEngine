@@ -32,4 +32,6 @@ private:
     float sampleRate;
     float grainDensity;
     float playbackRate;
+    bool timeFreeze = false; // Time freeze toggle
+    float smearAmount = 0.0f; // Controls the randomness in playback rate
 };

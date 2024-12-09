@@ -56,6 +56,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     juce::AudioProcessorValueTreeState parameters;
 private:
+    std::atomic<bool>* timeFreezeParam = nullptr; ///< Time freeze toggle parameter
+    std::atomic<float>* pitchSmearParam = nullptr; ///< Pitch smearing parameter
     std::unique_ptr<Granulator> granulator;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     //==============================================================================

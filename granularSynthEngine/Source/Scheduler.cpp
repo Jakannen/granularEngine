@@ -83,6 +83,8 @@ void Scheduler::process(float* buffer, size_t numSamples) {
  * @param numSamples The number of audio samples to process in this block.
  */
 void Scheduler::activateNewGrains() {
+    if (timeFreeze) return; // Stop activating new grains when freeze is enabled
+
     // Calculate the number of grains to activate based on density
     size_t grainsToActivate = static_cast<size_t>(grainDensity * sampleRate);
     // Attempt to activate the calculated number of grains
@@ -92,10 +94,23 @@ void Scheduler::activateNewGrains() {
                 // Randomize start position and activate the grain
                 float startSample = static_cast<float>(std::rand()) / RAND_MAX * sourceBuffer->size();
                 float duration = 0.05f; // Fixed grain duration (e.g., 50ms)
-                grain.activate(startSample, duration, playbackRate, *sourceBuffer);
+                // Apply pitch smearing
+                float randomSmear = 1.0f + (static_cast<float>(std::rand()) / RAND_MAX - 0.5f) * smearAmount;
+
+                // Activate the grain with parameters
+                grain.activate(startSample, duration, playbackRate * randomSmear, *sourceBuffer);
                 ++activeGrainCount;
                 break; // Move to the next grain
             }
         }
     }
+}
+
+void Scheduler::setTimeFreeze(bool shouldFreeze)
+{
+    timeFreeze = shouldFreeze;
+}
+
+void Scheduler::setSmearAmount(float amount) {
+    smearAmount = amount;
 }

@@ -32,9 +32,13 @@ private:
 
     juce::Slider grainDensitySlider;
     juce::Slider playbackRateSlider;
+    juce::Slider pitchSmearSlider;
+    juce::ToggleButton timeFreezeButton;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> grainDensityAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> playbackRateAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> pitchSmearAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> timeFreezeAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranularSynthEngineAudioProcessorEditor)
 };

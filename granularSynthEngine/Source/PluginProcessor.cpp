@@ -171,6 +171,8 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout GranularSynthEngineAudioProcessor::createParameterLayout() {
     return {
         std::make_unique<juce::AudioParameterFloat>("grainDensity", "Grain Density", 0.0f, 1.0f, 0.5f),
-        std::make_unique<juce::AudioParameterFloat>("playbackRate", "Playback Rate", 0.5f, 2.0f, 1.0f)
+        std::make_unique<juce::AudioParameterFloat>("playbackRate", "Playback Rate", 0.5f, 2.0f, 1.0f),
+        std::make_unique<juce::AudioParameterBool>("timeFreeze", "Time Freeze", false),
+        std::make_unique<juce::AudioParameterFloat>("pitchSmear", "Pitch Smearing", 0.0f, 1.0f, 0.0f)
     };
 }

@@ -45,6 +45,8 @@ public:
      * @param numSamples The number of audio samples to process in this block.
      */
     void process(float* buffer, size_t numSamples);
+    void setTimeFreeze(bool shouldFreeze);
+    void setSmearAmount(float amount);
 
 private:
     const std::vector<float>* sourceBuffer; ///< Shared audio source buffer.
@@ -53,9 +55,12 @@ private:
     float sampleRate;                       ///< Audio sample rate (e.g., 44100 Hz).
     float grainDensity;                     ///< Number of grains activated per second.
     float playbackRate;                     ///< Playback speed multiplier.
-
+    bool timeFreeze = false;                ///< Stops grain activation when enabled
+    float smearAmount = 0.0f;               ///< Controls the randomness in playback rate
     /**
      * Activates new grains based on the grain density and playback parameters.
      */
     void activateNewGrains();
+
+    
 };
