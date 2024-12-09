@@ -13,8 +13,14 @@
 GranularSynthEngineAudioProcessorEditor::GranularSynthEngineAudioProcessorEditor (GranularSynthEngineAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+    addAndMakeVisible(grainDensitySlider);
+    addAndMakeVisible(playbackRateSlider);
+
+    grainDensityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.parameters, "grainDensity", grainDensitySlider);
+
+    playbackRateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.parameters, "playbackRate", playbackRateSlider);
     setSize (400, 300);
 }
 
@@ -35,6 +41,6 @@ void GranularSynthEngineAudioProcessorEditor::paint (juce::Graphics& g)
 
 void GranularSynthEngineAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    grainDensitySlider.setBounds(50, 50, getWidth() - 100, 20);
+    playbackRateSlider.setBounds(50, 100, getWidth() - 100, 20);
 }
